@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Website</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Ensure the video covers the entire background of the section */
+        .video-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+        /* Linear gradient overlay */
+        .gradient-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.3));
+            z-index: 0;
+            transition: opacity 0.3s;
+        }
+        .gradient-overlay:hover {
+            opacity: 0; /* Remove gradient on hover */
+        }
+        /* Styling for the text container to appear without padding */
+        .text-overlay {
+            position: relative;
+            z-index: 10; /* Ensure text is on top */
+            color: white;
+            text-align: center;
+        }
+        /* Play/Pause button styling */
+        .control-button {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            z-index: 10;
+        }
+        .control-button::after {
+            content: '▶';
+            color: black;
+            transition: opacity 0.3s;
+        }
+        .control-button:hover::after {
+            content: '⏸';
+        }
+        .control-button:hover {
+            background-color: rgba(255, 255, 255, 1);
+        }
+        .control-button.paused::after {
+            content: '⏸';
+        }
+        /* Additional Styling */
+        .font-stylish {
+            font-family: 'Playfair Display', serif;
+        }
+        .btn-explore {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-30%);
+            background-color: indigo-400;
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btn-explore:hover {
+            background-color: indigo-800;
+            transform: scale(1.05);
+        }
+
+         /* Custom underline effect     NAV BAR */
+         .nav-link {
+            position: relative;
+            transition: color 0.3s;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: white;
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+        .nav-link:hover::after {
+            transform: scaleX(1);
+        }
+          /* Keyframes for a smooth scale-up animation */
+        @keyframes scaleUp {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Custom styling for the h1 element */
+        .fancy-heading {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem; /* Responsive size */
+            font-weight: 700;
+            color: #fff; /* White text color */
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5); /* Subtle shadow for depth */
+            letter-spacing: 1px; /* Spacing between letters */
+            text-transform: uppercase; /* Uppercase text */
+            position: relative; /* For pseudo-element positioning */
+            margin: 0; /* Remove default margin */
+            padding: 10px; /* Add some padding */
+            animation: scaleUp 1s ease-out; /* Apply the animation */
+        }
+
+        .fancy-heading::before {
+            content: '';
+            position: absolute;
+            bottom: -5px; /* Position the underline below the text */
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(to right, #f8a51d, #e87b00); /* Gradient underline */
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .fancy-heading:hover::before {
+            transform: scaleX(1); /* Show the underline on hover */
+        }
+        /* Custom text styling */
+        .stylish-text {
+            font-family: 'Lora', serif; /* Elegant serif font */
+            font-size: 1.125rem; /* Equivalent to text-lg */
+            color: #d1d5db; /* Light grey for contrast */
+            margin-bottom: 2rem; /* Equivalent to mb-8 */
+            line-height: 1.75; /* Improved readability */
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4); /* Subtle shadow for depth */
+            transition: color 0.3s, transform 0.3s; /* Smooth transitions */
+        }
+
+        .stylish-text:hover {
+            color: #ffffff; /* Brightens text on hover */
+            transform: translateY(-2px); /* Subtle upward shift on hover */
+        }
+    </style>
+</head>
+
+<body class="bg-white text-charcoal">
+    <header>
+         <!-- Navigation Bar -->
+    <nav class="bg-black text-white  p-5">
+        <div class="container mx-auto flex flex-col md:flex-row justify-between items-center">
+            <!-- Logo/Title -->
+            <h1 class="fancy-heading">Anand Hospital & Trauma Centre</h1>
+            <!-- Navigation Links -->
+            <ul class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-6 mt-4 md:mt-0">
+                <li><a href="#home" class="nav-link text-gray-400 hover:text-white p-2">Home</a></li>
+                <li><a href="#book-appointment" class="nav-link text-gray-400 hover:text-white p-2">Book an Appointment</a></li>
+                <li><a href="#departments" class="nav-link text-gray-400 hover:text-white p-2">Departments</a></li>
+                <li><a href="#why-us" class="nav-link text-gray-400 hover:text-white p-2">Why Us</a></li>
+                <li><a href="#services" class="nav-link text-gray-400 hover:text-white p-2">Services</a></li>
+                <li><a href="#gallery" class="nav-link text-gray-400 hover:text-white p-2">Gallery</a></li>
+                <li><a href="#patients" class="nav-link text-gray-400 hover:text-white p-2">Patient Words</a></li>
+            </ul>
+        </div>
+    </nav>
+    </header>
+
+    <main >
+         <!-- Home Section -->
+           <!-- Hero Section with Video Background -->
+    <div class="relative-section relative overflow-hidden h-screen">
+        <!-- Video Background -->
+        <video id="background-video" class="video-background" autoplay muted loop>
+            <source src="main video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+
+        <!-- Linear Gradient Overlay -->
+        <div class="gradient-overlay"></div>
+
+        <!-- Hero Section Content -->
+        <section id="home" class="relative flex flex-col items-center justify-center w-full h-full">
+            <div class="text-overlay text-center">
+                <h2 class="text-5xl md:text-9xl font-stylish mb-4">Welcome to AHTC</h2>
+                <p class=" text-white stylish-text text-center"> Providing compassionate care and exceptional medical services to our community.                      Your health and well-being are our top priorities.                     Anand Hospital and Trauma Centre                      is a multi-speciality hospital .                      We are a 24×7 facility with a team of specialist doctors,                                            state-of-the art equipment, and ICU facility.                                                                    Our service is based on the enormous goodwill and                                              faith that we have earned over the years.                               We strive to provide our patients with                      personalized care and ensure our patients feel at home.Our highly qualified team                      of doctors is well known as pioneers in their fields,                                            dedicated to patient care and welfare.</p>
+            </div>
+
+            <!-- Explore Departments Button -->
+            <a href="#departments" class="btn-explore bg-neutral-600">
+                Explore Departments
+            </a>
+
+            <!-- Play/Pause Button -->
+            <button id="control-button" class="control-button"></button>
+        </section>
+    </div>
+
+    <script>
+        const video = document.getElementById('background-video');
+        const controlButton = document.getElementById('control-button');
+
+        // Toggle play/pause on button click
+        controlButton.addEventListener('click', function() {
+            if (video.paused) {
+                video.play();
+                controlButton.classList.remove('paused');
+            } else {
+                video.pause();
+                controlButton.classList.add('paused');
+            }
+        });
+
+        // Update button icon based on play/pause state
+        video.addEventListener('play', function() {
+            controlButton.classList.remove('paused');
+        });
+
+        video.addEventListener('pause', function() {
+            controlButton.classList.add('paused');
+        });
+    </script>
+
+
+        <!-- Departments Section -->
+        <section id="departments" class="py-20 bg-indigo-200">
+            <div class="container mx-auto">
+                <h2 class="text-4xl font-bold mb-6 text-indigo-900 text-center">Medical Departments</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                     <!-- Orthopedics Department -->
+                     <div class="bg-indigo-300 rounded shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+                        <img src="bonedoc.jpeg" alt="Orthopedics Doctor" class="w-full h-48 object-cover rounded mb-4">
+                        <h3 class="text-xl font-semibold mb-2">Orthopedics Department</h3>
+                        <p class="text-gray-700 mb-4">Dr. Shekhar Tomer - Orthopedic Surgeon</p>
+                        <a href="doctor-orthopedics.html" class="bg-indigo-400 text-black py-2 px-4 rounded hover:shadow-lg transition-transform transform hover:scale-105">View Details</a>
+                    </div>
+                    <!-- Eye Department -->
+                    <div class="bg-indigo-300 rounded shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+                        <img src="eyedoc1.jpeg" alt="Eye Doctor" class="w-full h-48 object-cover rounded mb-4">
+                        <h3 class="text-xl font-semibold mb-2">Eye Department</h3>
+                        <p class="text-gray-700 mb-4">Dr. Vatsala Nidhi - Eye Specialist</p>
+                        <a href="eyedoc.html" class="bg-indigo-400 text-black py-2 px-4 rounded hover:shadow-lg transition-transform transform hover:scale-105">View Details</a>
+                    </div>
+                    <!-- ENT Department -->
+                    <div class="bg-indigo-300 rounded shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+                        <img src="entdoc.jpeg" alt="ENT Doctor" class="w-full h-48 object-cover rounded mb-4">
+                        <h3 class="text-xl font-semibold mb-2">ENT Department</h3>
+                        <p class="text-gray-700 mb-4">Dr. Aashish Tomer - ENT Specialist</p>
+                        <a href="doctor-ent.html" class="bg-indigo-400 text-black py-2 px-4 rounded hover:shadow-lg transition-transform transform hover:scale-105">View Details</a>
+                    </div>
+                    <!-- Medicine Department -->
+                    <div class="bg-indigo-300 rounded shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+                        <img src="path/to/medicine-doctor.jpg" alt="Medicine Doctor" class="w-full h-48 object-cover rounded mb-4">
+                        <h3 class="text-xl font-semibold mb-2">Medicine Department</h3>
+                        <p class="text-gray-700 mb-4">Dr. Anand Tomer - Medicine Specialist</p>
+                        <a href="doctor-medicine.html" class="bg-indigo-400 text-black py-2 px-4 rounded hover:shadow-lg transition-transform transform hover:scale-105">View Details</a>
+                    </div>
+                   
+                </div>
+            </div>
+        </section>
+
+        <!-- Why Us Section -->
+        <section id="why-us" class="py-20 bg-gradient-to-r from-teal-400 to-cyan-500 text-black">
+            <div class="container mx-auto text-center">
+                <h2 class="text-4xl font-bold mb-6">Why Choose Us?</h2>
+                <p class="text-lg mb-12">Discover the key reasons why our hospital stands out for exceptional care and services.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-indigo-200 rounded shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+                        <div class="flex items-center justify-center mb-4">
+                            <svg class="w-12 h-12 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4h16v16H4V4z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">State-of-the-Art Facilities</h3>
+                        <p class="text-gray-700">Our hospital is equipped with the latest medical technology to provide the best care.</p>
+                    </div>
+                    <div class="bg-indigo-200 rounded shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+                        <div class="flex items-center justify-center mb-4">
+                            <svg class="w-12 h-12 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c1.104 0 2 .896 2 2s-.896 2-2 2-2-.896-2-2 .896-2 2-2zm0 4v4m0 0h.01"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Expert Medical Staff</h3>
+                        <p class="text-gray-700">Our team of specialists are highly qualified and experienced in their fields.</p>
+                    </div>
+                    <div class="bg-indigo-200 rounded shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+                        <div class="flex items-center justify-center mb-4">
+                            <svg class="w-12 h-12 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v14a1 1 0 001 1h14a1 1 0 001-1V7m-1 1H4m16-4v5m0 14H4v-2h16v2zm-8-6V7m0 0V3m0 0H8m4 4h-4m4-4h4"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Comprehensive Care</h3>
+                        <p class="text-gray-700">From routine check-ups to complex surgeries, we offer a full range of medical services.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section -->
+        <section id="services" class="bg-indigo-200 py-20">
+            <div class="container mx-auto">
+                <h2 class="text-4xl font-bold mb-6 text-center">Our Services</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-indigo-300 rounded shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+                        <h3 class="text-xl font-semibold mb-4">General Consultation</h3>
+                        <p class="text-gray-700">Experienced doctors available for routine checkups and consultations.</p>
+                    </div>
+                    <div class="bg-indigo-300 rounded shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+                        <h3 class="text-xl font-semibold mb-4">Emergency Services</h3>
+                        <p class="text-gray-700">24/7 emergency services with state-of-the-art facilities.</p>
+                    </div>
+                    <div class="bg-indigo-300 rounded shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+                        <h3 class="text-xl font-semibold mb-4">Surgical Procedures</h3>
+                        <p class="text-gray-700">Advanced surgical procedures performed by our expert surgeons.</p>
+                    </div>
+                    <div class="bg-indigo-300 rounded shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+                        <h3 class="text-xl font-semibold mb-4">Fully Automated Laboratries</h3>
+                        <p class="text-gray-700">Committed to fulfilling all surgery expectations and providing personalised care.</p>
+                    </div>
+                    <div class="bg-indigo-300 rounded shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+                        <h3 class="text-xl font-semibold mb-4">Beds</h3>
+                        <p class="text-gray-700">More than 30 private beds in a sanitized environment.</p>
+                    </div>
+                    <div class="bg-indigo-300 rounded shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+                        <h3 class="text-xl font-semibold mb-4">Operation Theaters</h3>
+                        <p class="text-gray-700">Automated OT's with state of the art equipments.</p>
+                    </div>
+                    
+                </div>
+            </div>
+        </section>
+
+        <!-- Gallery Section -->
+        <section id="gallery" class="py-20">
+            <div class="container mx-auto">
+                <h2 class="text-4xl font-bold mb-6 text-center">Photo Gallery</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <img src="h1.webp" alt="Gallery Image 1" class="w-full h-64 object-cover rounded transition-transform transform hover:scale-105">
+                    <img src="h2.jpg" alt="Gallery Image 2" class="w-full h-64 object-cover rounded transition-transform transform hover:scale-105">
+                    <img src="h3.avif" alt="Gallery Image 3" class="w-full h-64 object-cover rounded transition-transform transform hover:scale-105">
+                </div>
+            </div>
+        </section>
+
+        <!-- Patient Words Section -->
+        <section id="patients" class="bg-indigo-200 py-20">
+            <div class="container mx-auto">
+                <h2 class="text-4xl font-bold mb-6 text-center">Patient Words</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <div class="bg-indigo-300 rounded shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+                        <p class="text-gray-700">"The care I received was exceptional. The staff were friendly and professional."</p>
+                        <p class="font-semibold mt-4">- Patient A</p>
+                    </div>
+                    <div class="bg-indigo-300 rounded shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+                        <p class="text-gray-700">"I was treated with the utmost respect and received the best treatment."</p>
+                        <p class="font-semibold mt-4">- Patient B</p>
+                    </div>
+                    <div class="bg-indigo-300 rounded shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300">
+                        <p class="text-gray-700">"The hospital's facilities are top-notch. Highly recommend!"</p>
+                        <p class="font-semibold mt-4">- Patient C</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Book Appointment Section -->
+        <section id="book-appointment" class="py-20 bg-indigo-200">
+            <div class="container mx-auto">
+                <h2 class="text-4xl font-bold mb-6 text-center">Book an Appointment</h2>
+                <form id="appointment-form" class="space-y-4">
+                    <input type="text" id="name" placeholder="Full Name" class="w-full p-3 border border-gray-300 rounded" required>
+                    <input type="email" id="email" placeholder="Email" class="w-full p-3 border border-gray-300 rounded" required>
+                    <input type="tel" id="phone" placeholder="Phone" class="w-full p-3 border border-gray-300 rounded" required>
+                    <select id="department" class="w-full p-3 border border-gray-300 rounded" required>
+                        <option value="" disabled selected>Select Department</option>
+                        <option value="eye">Eye</option>
+                        <option value="ent">ENT</option>
+                        <option value="medicine">Medicine</option>
+                        <option value="orthopedics">Orthopedics</option>
+                    </select>
+                    <input type="date" id="date" class="w-full p-3 border border-gray-300 rounded" required>
+                    <input type="time" id="time" class="w-full p-3 border border-gray-300 rounded" required>
+                    <button type="submit" class="bg-indigo-500 text-black py-3 px-6 rounded hover:shadow-lg transition-transform transform hover:scale-105">Submit</button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-primary bg-indigo-900 text-black py-4">
+        <div class="container mx-auto text-center">
+            <div class="mb-4">
+                <h2 class="text-lg  font-bold">For Patients & Visitors</h2>
+                <ul>
+                    <li><a href="#book-appointment" class="hover:underline">Request an Appointment</a></li>
+                    <li><a href="#departments" class="hover:underline">Specialists</a></li>
+                    <li><a href="#departments" class="hover:underline">Medical Departments</a></li>
+                    <li><a href="#services" class="hover:underline">Specialty Clinics</a></li>
+                    <li><a href="#admissions" class="hover:underline">Admissions & Discharge</a></li>
+                    <li><a href="#patients" class="hover:underline">Patients & Visitors Guide</a></li>
+                    <li><a href="#lab-results" class="hover:underline">Lab Results</a></li>
+                    <li><a href="#ews-care" class="hover:underline">EWS Care</a></li>
+                </ul>
+            </div>
+            <div>
+                <p><a href="tel:+1234567890" class="hover:underline">Contact Us: +123 456 7890</a> | <a href="mailto:email@example.com" class="hover:underline">email@example.com</a></p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/script.js"></script>
+    <script>
+        AOS.init();
+    </script>
+</body>
+
+</html>
